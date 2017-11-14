@@ -1,15 +1,5 @@
 #!/bin/bash
 
-#CPU = $ARGUMENTS['c']
-#IO = $ARGUMENTS['i']
-#DISK = $ARGUMENTS['d']
-#DURATION = $ARGUMENTS['t']
-#VM_BYTES = $ARGUMENTS['m']
-#VM = $ARGUMENTS['v']
-
-#getopt -c CPU
-#getopt -t DURATION
-
 while getopts c:i:d:t:m:v: option
 do
  case "${option}"
@@ -74,24 +64,21 @@ if [ "$1" == "help" ];then
 	help_message
 fi
 
-if ["$CPU" == ""] || ["$IO" == ""] || ["$DISK" == ""] || ["$VM" == ""] || ["$VM_BYTES" == ""] || ["$DURATION" == ""]; then
-	#log "INFO" "No CPU or IO or Disk or Memory or VM or Time specified!"
-	#log "INFO" "You need to try HELP!!!"
-	help_message
-fi
+#if [ "$CPU" == "" ] || [ "$IO" == "" ] || [ "$DISK" == "" ] || [ "$VM" == "" ] || [ "$VM_BYTES" == "" ] || [ "$DURATION" == "" ];
+#then
+#	#log "INFO" "No CPU or IO or Disk or Memory or VM or Time specified!"
+#	#log "INFO" "You need to try HELP!!!"
+#	help_message
+#fi
 
 if [ "$CPU" != "" ] && [ "$DURATION" != "" ];
     then
 	#log "INFO" "Stressing CPU tests running $CPU"
-	echo $CPU
-    echo $DURATION
 	stressCPU
 
 elif [ "$IO" != "" ] && [ "$DURATION" != "" ];
     then
     #log "INFO" "Stressing IO test running $IO"
-    echo $IO
-    echo $DURATION
     stressIO
 
 elif [ "$DISK" != "" ] && [ "$DURATION" != "" ];
@@ -113,4 +100,9 @@ elif [ "$CPU" != "" ] && [ "$IO" != "" ] && [ "$DISK" != "" ] && [ "$VM" != "" ]
     then
 	#log "INFO" "Stressing IO test running $CPU $IO $DISK $VM $VM_BYTES"
     stressAll
+elif [ "$CPU" == "" ] || [ "$IO" == "" ] || [ "$DISK" == "" ] || [ "$VM" == "" ] || [ "$VM_BYTES" == "" ] || [ "$DURATION" == "" ];
+    then
+	#log "INFO" "No CPU or IO or Disk or Memory or VM or Time specified!"
+	#log "INFO" "You need to try HELP!!!"
+	help_message
 fi
