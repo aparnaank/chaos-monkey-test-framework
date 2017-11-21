@@ -19,6 +19,7 @@ package org.wso2.chaosmonkey.agent;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import java.util.Map;
 
 /**
  * This is the Microservice resource class.
@@ -41,6 +42,28 @@ public class ChaosService {
     @Path("/revive/{instance}")
     public String reviveServer(@PathParam("instance") String instance) {
         System.out.println("Starting server : " + instance);
+        return "Done!!!";
+    }
+
+    @POST
+    @Path("/cpu/{cpu}/duration/{time}")
+    public String highCPU(@PathParam("cpu") String cpu, @PathParam("time") String time){
+        System.out.println("High CPU utilization : " + cpu);
+        System.out.println("High CPU utilize duration : " + time);
+
+        try {
+            ProcessBuilder pb =
+                    new ProcessBuilder("/home/aparna/QAHackathon/chaos-monkey-test-framework/chaotic-patterns/server-stressing/makeStress.sh", "-c", "-t");
+            Map<String, String> env = pb.environment();
+            env.put("-c", cpu);
+            env.put("-t", time);
+            Process p = pb.start();
+            //int i = p.waitFor();
+            System.out.println("Script executed successfully");
+            System.out.println("Test:" + pb );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return "Done!!!";
     }
 }
