@@ -7,7 +7,6 @@ and then
 java -jar target/chaos-agent-0.1-SNAPSHOT.jar
 ```
 
-
 ####Commands
 terminate server:
 ```
