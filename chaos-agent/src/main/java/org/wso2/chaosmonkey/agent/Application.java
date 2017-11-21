@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.chaosmonkey;
+
+package org.wso2.chaosmonkey.agent;
 
 import org.wso2.msf4j.MicroservicesRunner;
 
 /**
- * Created by aparna on 11/21/17.
+ * Application entry point.
+ *
+ * @since 0.1-SNAPSHOT
  */
 
 public class Application {

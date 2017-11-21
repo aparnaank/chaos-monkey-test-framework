@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package org.wso2.chaosmonkey;
+package org.wso2.chaosmonkey.agent;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 /**
- * Created by aparna on 11/21/17.
+ * This is the Microservice resource class.
+ * See <a href="https://github.com/wso2/msf4j#getting-started">https://github.com/wso2/msf4j#getting-started</a>
+ * for the usage of annotations.
+ *
+ * @since 0.1-SNAPSHOT
  */
-
 @Path("/chaos")
 public class ChaosService {
 
