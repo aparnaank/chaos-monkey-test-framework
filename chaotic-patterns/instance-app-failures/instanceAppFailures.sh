@@ -13,32 +13,33 @@ done
 
 
 function serverOperations(){
-echo $operation
-echo $path
-./$path/bin/wso2server.sh $operation
+    echo $operation
+    echo $path
+    sh $path/bin/wso2server.sh $operation
 
 }
 
 function serverKill(){
-    PID=`ps -A |grep wso2| awk '{print $1}'`
-    echo $PID
-    kill -9 $PID
+
+    PID=`jps | grep Bootstrap | awk '{ print $1 }'`
+    kill -9 ${PID}
+
 }
 
 function help_message() {
     echo ""
 	echo "Restarting server"
-	echo "./makeStress.sh -c [no of cpu] -t [duration N ]"
+	echo "./makeStress.sh -p [instance path] -t [duration N ]"
 	echo ""
 	echo ""
 	echo "Kill server"
-	echo "./makeStress.sh -k kill-server"
+	echo "./makeStress.sh -k terminateserver"
 	echo ""
 	exit
 }
 
 
-if [ "$killSvr" == "kill-server" ];
+if [ "$killSvr" == "terminateserver" ];
     then
 	#log "INFO" "Stressing CPU tests running $CPU"
 	serverKill

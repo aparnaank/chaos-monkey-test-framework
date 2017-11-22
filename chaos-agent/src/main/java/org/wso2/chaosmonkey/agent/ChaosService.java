@@ -40,40 +40,74 @@ public class ChaosService {
 
     private static final Log log = LogFactory.getLog(ChaosService.class);
 
+    /*
+    * Server terminating function
+    * */
     @POST
     @Path("/terminate/{instance}")
     public String terminateServer(@PathParam("instance") String instance) {
-        System.out.println("Terminating instance : " + instance);
+
+        String scriptLocation="/home/aparna/QAHackathon/chaos-monkey-test-framework/chaotic-patterns/instance-app-failures";
+        //Shell file name needs to be executed
+        String shellfile="instanceAppFailures.sh";
+        String[] command = new String[]{"/bin/bash",scriptLocation + File.separator + shellfile,"-k" + instance};
+
+        try {
+            processOutputGenerator(command);
+        }
+        catch (IOException e) {
+            log.error("Error while trying to run instanceAppFailures shell script with server termination: " + e.getMessage(), e);
+        }
         return "Done!!!";
     }
 
+    /*
+    * Server start-up, restart, shutdown function
+    * */
     @POST
-    @Path("/revive/{instance}")
-    public String reviveServer(@PathParam("instance") String instance) {
-        System.out.println("Starting server : " + instance);
+    @Path("/revive/{operation}")
+    public String reviveServer(@PathParam("operation") String operation) {
+        System.out.println("Starting server : " + operation);
+        String scriptLocation="/home/aparna/QAHackathon/chaos-monkey-test-framework/chaotic-patterns/instance-app-failures";
+        //Shell file name needs to be executed
+        String shellfile="instanceAppFailures.sh";
+        String instancePath="/home/aparna/wso2packs/wso2is-5.0.0";
+        String[] command = new String[]{"/bin/bash",scriptLocation + File.separator + shellfile,"-p" + instancePath, "-o" + operation};
+
+        try {
+            processOutputGenerator(command);
+        }
+        catch (IOException e) {
+            log.error("Error while trying to run instanceAppFailures shell script with server termination: " + e.getMessage(), e);
+        }
         return "Done!!!";
     }
 
+
+    /*
+    * Increasing CPU utilization function
+    * */
     @POST
     @Path("/cpu/{cpu}/duration/{time}")
     public String highCPU(@PathParam("cpu") String cpu, @PathParam("time") String time){
-        System.out.println("High CPU utilization : " + cpu);
-        System.out.println("High CPU utilize duration : " + time);
 
         String scriptLocation="/home/aparna/QAHackathon/chaos-monkey-test-framework/chaotic-patterns/server-stressing";
         //Shell file name needs to be executed
         String shellfile="makeStress.sh";
-
-        String[] command = new String[]{"/bin/bash", scriptLocation + File.separator + shellfile,"-c" + cpu, "-t" + time};
+        String[] command = new String[]{"/bin/bash",scriptLocation + File.separator + shellfile,"-c" + cpu, "-t" + time};
 
         try {
             processOutputGenerator(command);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             log.error("Error while trying to run stress shell CPU parameters : " + e.getMessage(), e);
         }
         return "Done!!!";
     }
 
+    /*
+    * Increasing IO utilization function
+    * */
     @POST
     @Path("/io/{io}/duration/{time}")
     public String highIO(@PathParam("io") String io, @PathParam("time") String time){
@@ -81,14 +115,14 @@ public class ChaosService {
         String scriptLocation="/home/aparna/QAHackathon/chaos-monkey-test-framework/chaotic-patterns/server-stressing";
         //Shell file name needs to be executed
         String shellfile="makeStress.sh";
-        String[] command = new String[]{"/bin/bash", scriptLocation + File.separator + shellfile,"-i" + io, "-t" + time};
+        String[] command = new String[]{"/bin/bash",scriptLocation + File.separator + shellfile,"-i" + io, "-t" + time};
 
         try {
             processOutputGenerator(command);
-        }catch ( IOException e){
+        }
+        catch ( IOException e){
             log.error("Error while trying to run stress shell with IO parameters : " + e.getMessage(), e);
         }
-
         return "Done!!!";
 
     }

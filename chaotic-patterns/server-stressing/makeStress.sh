@@ -27,7 +27,7 @@ stress --d ${DISK} --timeout ${DURATION}'s' --verbose
 }
 
 function stressMemory() {
-stress --vm-bytes ${VM_BYTES} --timeout ${DURATION}'s' --verbose
+stress --vm ${VM} --vm-bytes ${VM_BYTES} --timeout ${DURATION}'s' --verbose
 }
 
 function stressVM() {
