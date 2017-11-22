@@ -1,29 +1,111 @@
 #!/bin/bash
 
-while getopts a:d:u:s: option
+while getopts a:d:u:s:p:t:H:h:c:A: option
 do
  case "${option}"
  in
  a) networkAdaptor=${OPTARG};;
  d) downRate=${OPTARG};;
  u) upRate=${OPTARG};;
- s) networkSet=${OPTARG};;
+ s) servPorts=${OPTARG};;
+ p) pasPorts=${OPTARG};;
+ t) trifPorts=${OPTARG};;
+ H) defPorts=${OPTARG};;
+ h) hazelPorts=${OPTARG};;
+ c) clearPorts=${OPTARG};;
+ A) all=${OPTARG};;
  esac
 done
 
 function networkFluctuate() {
-echo $networkAdaptor
-echo $downRate
-echo $downRate
-sudo wondershaper -a $networkAdaptor -d $downRate -u $downRate
+    echo $networkAdaptor
+    echo $downRate
+    echo $downRate
+    sudo wondershaper -a $networkAdaptor -d $downRate -u $downRate
 }
 
 function cleanUpNetworkFluctuate() {
-sudo wondershaper clear $networkAdaptor
+    sudo wondershaper clear $networkAdaptor
 }
 
 function networkUpDown(){
-ip link set $networkAdaptor $networkSet
+    ip link set $networkAdaptor $networkSet
+}
+
+function blockServeletsPorts(){
+    # Block 9443
+    sudo /sbin/iptables -A OUTPUT -p tcp --dport 9443 -j DROP
+    sudo /sbin/iptables -A INPUT -p tcp --destination-port 9443 -j DROP
+
+    # Block 9763
+    sudo /sbin/iptables -A OUTPUT -p tcp --dport 9763 -j DROP
+    sudo /sbin/iptables -A INPUT -p tcp --destination-port 9763 -j DROP
+}
+
+function blockPassThruPorts(){
+    # Block 9443
+    sudo /sbin/iptables -A OUTPUT -p tcp --dport 8280 -j DROP
+    sudo /sbin/iptables -A INPUT -p tcp --destination-port 8280 -j DROP
+
+    # Block 9763
+    sudo /sbin/iptables -A OUTPUT -p tcp --dport 8243 -j DROP
+    sudo /sbin/iptables -A INPUT -p tcp --destination-port 8243 -j DROP
+}
+
+function blockDefaultHTTPPorts(){
+    # Block 80
+    sudo /sbin/iptables -A OUTPUT -p tcp --dport 80 -j DROP
+    sudo /sbin/iptables -A INPUT -p tcp --destination-port 80 -j DROP
+
+    # Block 443
+    sudo /sbin/iptables -A OUTPUT -p tcp --dport 443 -j DROP
+    sudo /sbin/iptables -A INPUT -p tcp --destination-port 443 -j DROP
+}
+
+function blockThriftPorts(){
+    # Block 7711
+    sudo /sbin/iptables -A OUTPUT -p tcp --dport 7711 -j DROP
+    sudo /sbin/iptables -A INPUT -p tcp --destination-port 7711 -j DROP
+
+    #Block 7611
+    sudo /sbin/iptables -A OUTPUT -p tcp --dport 7611 -j DROP
+    sudo /sbin/iptables -A INPUT -p tcp --destination-port 7611 -j DROP
+}
+
+function blockHazelcastPorts(){
+    # Block 4000
+    sudo /sbin/iptables -A OUTPUT -p tcp --dport 4000 -j DROP
+    sudo /sbin/iptables -A INPUT -p tcp --destination-port 4000 -j DROP
+}
+
+function unblockAllPorts(){
+    sudo iptables -F
+}
+
+function blockAll(){
+    # Block 9443
+    sudo /sbin/iptables -A OUTPUT -p tcp --dport 9443 -j DROP
+    sudo /sbin/iptables -A INPUT -p tcp --destination-port 9443 -j DROP
+
+    # Block 9763
+    sudo /sbin/iptables -A OUTPUT -p tcp --dport 9763 -j DROP
+    sudo /sbin/iptables -A INPUT -p tcp --destination-port 9763 -j DROP
+
+    # Block 7711
+    sudo /sbin/iptables -A OUTPUT -p tcp --dport 7711 -j DROP
+    sudo /sbin/iptables -A INPUT -p tcp --destination-port 7711 -j DROP
+
+    #Block 7611
+    sudo /sbin/iptables -A OUTPUT -p tcp --dport 7611 -j DROP
+    sudo /sbin/iptables -A INPUT -p tcp --destination-port 7611 -j DROP
+
+    # Block 9443
+    sudo /sbin/iptables -A OUTPUT -p tcp --dport 8280 -j DROP
+    sudo /sbin/iptables -A INPUT -p tcp --destination-port 8280 -j DROP
+
+    # Block 9763
+    sudo /sbin/iptables -A OUTPUT -p tcp --dport 8243 -j DROP
+    sudo /sbin/iptables -A INPUT -p tcp --destination-port 8243 -j DROP
 }
 
 #function networkUp(){
@@ -38,10 +120,10 @@ function help_message() {
 	echo "./makeNetworkFluctuation.sh -a [network adapter]"
 	echo ""
 	echo "Stop the network adaptor"
-	echo "./makeNetworkFluctuation.sh -a [network adapter] -s [down]"
+	echo "./makeNetworkFluctuation.sh -a [network adapter] -d [down]"
 	echo ""
 	echo "Start the network adaptor"
-	echo "./makeNetworkFluctuation.sh -a [network adapter] -s [up]"
+	echo "./makeNetworkFluctuation.sh -a [network adapter] -u [up]"
 	echo ""
 	exit
 }
@@ -75,3 +157,28 @@ if [ "$networkAdaptor" != "" ] && [ "$networkSet" != "" ];
 	networkUpDown
 fi
 
+if [ "$servPorts" == "blockServelet" ];
+    then
+	#log "INFO" "Stressing CPU tests running $CPU"
+	blockServeletsPorts
+fi
+if [ "$pasPorts" != "" ];
+    then
+	#log "INFO" "Stressing CPU tests running $CPU"
+	blockPassThruPorts
+fi
+if [ "$trifPorts" != "" ];
+    then
+	#log "INFO" "Stressing CPU tests running $CPU"
+	blockThriftPorts
+fi
+if [ "$hazelPorts" != "" ];
+    then
+	#log "INFO" "Stressing CPU tests running $CPU"
+	blockThriftPorts
+fi
+if [ "$clearPorts" != "" ];
+    then
+	#log "INFO" "Stressing CPU tests running $CPU"
+	unblockAllPorts
+fi

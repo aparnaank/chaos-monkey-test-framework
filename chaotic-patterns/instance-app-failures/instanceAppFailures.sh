@@ -20,10 +20,8 @@ function serverOperations(){
 }
 
 function serverKill(){
-
     PID=`jps | grep Bootstrap | awk '{ print $1 }'`
     kill -9 ${PID}
-
 }
 
 function help_message() {
@@ -33,13 +31,13 @@ function help_message() {
 	echo ""
 	echo ""
 	echo "Kill server"
-	echo "./makeStress.sh -k terminateserver"
+	echo "./makeStress.sh -k killSvr"
 	echo ""
 	exit
 }
 
 
-if [ "$killSvr" == "terminateserver" ];
+if [ "$killSvr" == "killSvr" ];
     then
 	#log "INFO" "Stressing CPU tests running $CPU"
 	serverKill

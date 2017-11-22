@@ -47,7 +47,7 @@ public class ChaosService {
     @Path("/terminate/{instance}")
     public String terminateServer(@PathParam("instance") String instance) {
 
-        String scriptLocation="/home/aparna/QAHackathon/chaos-monkey-test-framework/chaotic-patterns/instance-app-failures";
+        String scriptLocation="/home/ubuntu/chaotic-patterns/instance-app-failures";
         //Shell file name needs to be executed
         String shellfile="instanceAppFailures.sh";
         String[] command = new String[]{"/bin/bash",scriptLocation + File.separator + shellfile,"-k" + instance};
@@ -68,10 +68,10 @@ public class ChaosService {
     @Path("/revive/{operation}")
     public String reviveServer(@PathParam("operation") String operation) {
         System.out.println("Starting server : " + operation);
-        String scriptLocation="/home/aparna/QAHackathon/chaos-monkey-test-framework/chaotic-patterns/instance-app-failures";
+        String scriptLocation="/home/ubuntu/chaotic-patterns/instance-app-failures";
         //Shell file name needs to be executed
         String shellfile="instanceAppFailures.sh";
-        String instancePath="/home/aparna/wso2packs/wso2is-5.0.0";
+        String instancePath="/home/ubuntu/km/wso2am-2.1.0";
         String[] command = new String[]{"/bin/bash",scriptLocation + File.separator + shellfile,"-p" + instancePath, "-o" + operation};
 
         try {
@@ -91,7 +91,7 @@ public class ChaosService {
     @Path("/cpu/{cpu}/duration/{time}")
     public String highCPU(@PathParam("cpu") String cpu, @PathParam("time") String time){
 
-        String scriptLocation="/home/aparna/QAHackathon/chaos-monkey-test-framework/chaotic-patterns/server-stressing";
+        String scriptLocation="/home/ubuntu/chaotic-patterns/server-stressing";
         //Shell file name needs to be executed
         String shellfile="makeStress.sh";
         String[] command = new String[]{"/bin/bash",scriptLocation + File.separator + shellfile,"-c" + cpu, "-t" + time};
@@ -112,7 +112,7 @@ public class ChaosService {
     @Path("/io/{io}/duration/{time}")
     public String highIO(@PathParam("io") String io, @PathParam("time") String time){
 
-        String scriptLocation="/home/aparna/QAHackathon/chaos-monkey-test-framework/chaotic-patterns/server-stressing";
+        String scriptLocation="/home/ubuntu/chaotic-patterns/server-stressing";
         //Shell file name needs to be executed
         String shellfile="makeStress.sh";
         String[] command = new String[]{"/bin/bash",scriptLocation + File.separator + shellfile,"-i" + io, "-t" + time};
@@ -123,7 +123,27 @@ public class ChaosService {
         catch ( IOException e){
             log.error("Error while trying to run stress shell with IO parameters : " + e.getMessage(), e);
         }
-        return "Done!!!";
+        return "Done    !!!";
+    }
 
+    /*
+    * Increasing IO utilization function
+    * */
+    @POST
+    @Path("/blockserelets/{servport}")
+    public String blockServerletPorts(@PathParam("servport") String servport){
+
+        String scriptLocation="/home/ubuntu/chaotic-patterns/network-fluctuation";
+        //Shell file name needs to be executed
+        String shellfile="makeNetworkFluctuation.sh";
+        String[] command = new String[]{"/bin/bash",scriptLocation + File.separator + shellfile,"-s" + servport};
+
+        try {
+            processOutputGenerator(command);
+        }
+        catch ( IOException e){
+            log.error("Error while trying to run stress shell with IO parameters : " + e.getMessage(), e);
+        }
+        return "Done    !!!";
     }
 }
