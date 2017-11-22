@@ -16,10 +16,17 @@
 
 package org.wso2.chaosmonkey.agent;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
+
+import static org.wso2.chaosmonkey.agent.ScriptExecutorUtil.processOutputGenerator;
 
 /**
  * This is the Microservice resource class.
@@ -30,6 +37,8 @@ import java.util.Map;
  */
 @Path("/chaos")
 public class ChaosService {
+
+    private static final Log log = LogFactory.getLog(ChaosService.class);
 
     @POST
     @Path("/terminate/{instance}")
@@ -53,17 +62,35 @@ public class ChaosService {
 
         try {
             ProcessBuilder pb =
-                    new ProcessBuilder("/home/aparna/QAHackathon/chaos-monkey-test-framework/chaotic-patterns/server-stressing/makeStress.sh", "-c", "-t");
+                    new ProcessBuilder("sh /home/aparna/QAHackathon/chaos-monkey-test-framework/chaotic-patterns/server-stressing/makeStress.sh", "-c", "-t");
             Map<String, String> env = pb.environment();
             env.put("-c", cpu);
             env.put("-t", time);
             Process p = pb.start();
-            //int i = p.waitFor();
+            p.waitFor();
             System.out.println("Script executed successfully");
-            System.out.println("Test:" + pb );
+           // System.out.println("Test:" + pb );
         } catch (Exception e) {
             e.printStackTrace();
         }
         return "Done!!!";
+    }
+
+    @POST
+    @Path("/io/{io}/duration/{time}")
+    public String highIO(@PathParam("io") String io, @PathParam("time") String time){
+
+        String scriptLocation="/home/aparna/QAHackathon/chaos-monkey-test-framework/chaotic-patterns/server-stressing";
+        //Shell file name needs to be executed
+        String shellfile="makeStress.sh";
+        String[] command = new String[]{"/bin/bash", scriptLocation + File.separator + shellfile + '-i' + io+ '-t' + time};
+        try {
+            processOutputGenerator(command);
+        }catch ( IOException e){
+            log.error("Error while trying to run shell file : " + e.getMessage(), e);
+        }
+
+        return "Done!!!";
+
     }
 }
