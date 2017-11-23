@@ -58,7 +58,7 @@ public class ChaosService {
         catch (IOException e) {
             log.error("Error while trying to run instanceAppFailures shell script with server termination: " + e.getMessage(), e);
         }
-        return "Done!!!";
+        return "Termincation Done!!!";
     }
 
     /*
@@ -71,7 +71,7 @@ public class ChaosService {
         String scriptLocation="/home/ubuntu/chaotic-patterns/instance-app-failures";
         //Shell file name needs to be executed
         String shellfile="instanceAppFailures.sh";
-        String instancePath="/home/ubuntu/km/wso2am-2.1.0";
+        String instancePath="/mnt/wso2am-2.1.0";
         String[] command = new String[]{"/bin/bash",scriptLocation + File.separator + shellfile,"-p" + instancePath, "-o" + operation};
 
         try {
@@ -80,7 +80,7 @@ public class ChaosService {
         catch (IOException e) {
             log.error("Error while trying to run instanceAppFailures shell script with server termination: " + e.getMessage(), e);
         }
-        return "Done!!!";
+        return operation + "Done!!!";
     }
 
 
@@ -102,7 +102,7 @@ public class ChaosService {
         catch (IOException e) {
             log.error("Error while trying to run stress shell CPU parameters : " + e.getMessage(), e);
         }
-        return "Done!!!";
+        return "Increasing CPU utilization Done!!!";
     }
 
     /*
@@ -115,7 +115,7 @@ public class ChaosService {
         String scriptLocation="/home/ubuntu/chaotic-patterns/server-stressing";
         //Shell file name needs to be executed
         String shellfile="makeStress.sh";
-        String[] command = new String[]{"/bin/bash",scriptLocation + File.separator + shellfile,"-i" + io, "-t" + time};
+        String[] command = new String[]{"/bin/bash",scriptLocation + File.separator + shellfile,"-i" + io,"-t" + time};
 
         try {
             processOutputGenerator(command);
@@ -123,11 +123,11 @@ public class ChaosService {
         catch ( IOException e){
             log.error("Error while trying to run stress shell with IO parameters : " + e.getMessage(), e);
         }
-        return "Done    !!!";
+        return "Increasing IO utilization Done!!!";
     }
 
     /*
-    * Increasing IO utilization function
+    * Blocking ports function
     * */
     @POST
     @Path("/blockserelets/{servport}")
@@ -144,6 +144,6 @@ public class ChaosService {
         catch ( IOException e){
             log.error("Error while trying to run stress shell with IO parameters : " + e.getMessage(), e);
         }
-        return "Done    !!!";
+        return "Blocking servelet ports Done !!!";
     }
 }
