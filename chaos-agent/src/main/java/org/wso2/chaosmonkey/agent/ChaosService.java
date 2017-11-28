@@ -58,7 +58,7 @@ public class ChaosService {
         catch (IOException e) {
             log.error("Error while trying to run instanceAppFailures shell script with server termination: " + e.getMessage(), e);
         }
-        return "Termincation Done!!!";
+        return "Termination Done!!!";
     }
 
     /*

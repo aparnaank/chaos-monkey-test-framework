@@ -7,13 +7,13 @@ do
  a) networkAdaptor=${OPTARG};;
  d) downRate=${OPTARG};;
  u) upRate=${OPTARG};;
- s) servPorts=${OPTARG};;
- p) pasPorts=${OPTARG};;
- t) trifPorts=${OPTARG};;
- H) defPorts=${OPTARG};;
- h) hazelPorts=${OPTARG};;
- c) clearPorts=${OPTARG};;
- A) all=${OPTARG};;
+ p) blockPortType=${OPTARG};;
+# p) pasPorts=${OPTARG};;
+# t) trifPorts=${OPTARG};;
+# H) defPorts=${OPTARG};;
+# h) hazelPorts=${OPTARG};;
+# c) clearPorts=${OPTARG};;
+# A) all=${OPTARG};;
  esac
 done
 
@@ -82,7 +82,7 @@ function unblockAllPorts(){
     sudo iptables -F
 }
 
-function blockAll(){
+function blockAllPorts(){
     # Block 9443
     sudo /sbin/iptables -A OUTPUT -p tcp --dport 9443 -j DROP
     sudo /sbin/iptables -A INPUT -p tcp --destination-port 9443 -j DROP
@@ -125,6 +125,17 @@ function help_message() {
 	echo "Start the network adaptor"
 	echo "./makeNetworkFluctuation.sh -a [network adapter] -u [up]"
 	echo ""
+	echo "Block the ports"
+	echo "To block the serverlet ports - 'blockServelet' "
+	echo "To block the Passthru ports - 'blockPassthru' "
+	echo "To block the default https ports - 'blockDefault' "
+	echo "To block the thrift ports - '' "
+	echo "To block the hazelcast port - 'blockHazelcast' "
+	echo "To block all ports - 'blockAll' "
+	echo " Sample script execution "
+	echo "./makeNetworkFluctuation.sh -p [port type] "
+	echo ""
+
 	exit
 }
 
@@ -132,53 +143,77 @@ if [ "$1" == "help" ];then
 	help_message
 fi
 
-if [ "$networkAdaptor" == "" ] || [ "$downRate" == "" ] || [ "$upRate" == "" ];
-    then
-	#log "INFO" "No CPU or IO or Disk or Memory or VM or Time specified!"
-	#log "INFO" "You need to try HELP!!!"
-	help_message
-fi
+#if [ "$networkAdaptor" == "" ] || [ "$downRate" == "" ] || [ "$upRate" == "" ];
+#    then
+#	#log "INFO" "No CPU or IO or Disk or Memory or VM or Time specified!"
+#	#log "INFO" "You need to try HELP!!!"
+#	help_message
+#fi
+#
+#if [ "$networkAdaptor" != "" ] && [ "$downRate" != "" ] && [ "$upRate" != "" ];
+#    then
+#	#log "INFO" "Stressing CPU tests running $CPU"
+#	networkFluctuate
+#fi
+#
+#if  [ "$networkAdaptor" != "" ];
+#    then
+#	#log "INFO" "Stressing CPU tests running $CPU"
+#	cleanUpNetworkFluctuate
+#fi
+#
+#if [ "$networkAdaptor" != "" ] && [ "$networkSet" != "" ];
+#    then
+#	#log "INFO" "Stressing CPU tests running $CPU"
+#	networkUpDown
+#fi
 
-if [ "$networkAdaptor" != "" ] && [ "$downRate" != "" ] && [ "$upRate" != "" ];
-    then
-	#log "INFO" "Stressing CPU tests running $CPU"
-	networkFluctuate
-fi
+case ${blockPortType} in
+    blockServelet)
+        blockServeletsPorts
+        ;;
+    blockPassthru)
+        blockPassThruPorts
+        ;;
+    blockDefault)
+        blockDefaultHTTPPorts
+        ;;
+    blockThrift)
+        blockThriftPorts
+        ;;
+    blockHazelcast)
+        blockHazelcastPorts
+        ;;
+    blockAll)
+        blockAllPorts
+        ;;
+    *)
+        help_message
+        ;;
+esac
 
-if  [ "$networkAdaptor" != "" ];
-    then
-	#log "INFO" "Stressing CPU tests running $CPU"
-	cleanUpNetworkFluctuate
-fi
+#if [ "$blockPortType" == "blockServelet" ];
+#    then
+#	#log "INFO" "Stressing CPU tests running $CPU"
+#	blockServeletsPorts
+#elif [ "$blockPortType" == "blockPassthru" ];
+#    then
+#	#log "INFO" "Stressing CPU tests running $CPU"
+#	blockPassThruPorts
+#fi
+#if [ "$trifPorts" != "" ];
+#    then
+#	#log "INFO" "Stressing CPU tests running $CPU"
+#	blockThriftPorts
+#fi
+#if [ "$hazelPorts" != "" ];
+#    then
+#	#log "INFO" "Stressing CPU tests running $CPU"
+#	blockThriftPorts
+#fi
+#if [ "$clearPorts" != "" ];
+#    then
+#	#log "INFO" "Stressing CPU tests running $CPU"
+#	unblockAllPorts
+#fi
 
-if [ "$networkAdaptor" != "" ] && [ "$networkSet" != "" ];
-    then
-	#log "INFO" "Stressing CPU tests running $CPU"
-	networkUpDown
-fi
-
-if [ "$servPorts" == "blockServelet" ];
-    then
-	#log "INFO" "Stressing CPU tests running $CPU"
-	blockServeletsPorts
-fi
-if [ "$pasPorts" != "" ];
-    then
-	#log "INFO" "Stressing CPU tests running $CPU"
-	blockPassThruPorts
-fi
-if [ "$trifPorts" != "" ];
-    then
-	#log "INFO" "Stressing CPU tests running $CPU"
-	blockThriftPorts
-fi
-if [ "$hazelPorts" != "" ];
-    then
-	#log "INFO" "Stressing CPU tests running $CPU"
-	blockThriftPorts
-fi
-if [ "$clearPorts" != "" ];
-    then
-	#log "INFO" "Stressing CPU tests running $CPU"
-	unblockAllPorts
-fi
